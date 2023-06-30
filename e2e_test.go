@@ -10,9 +10,10 @@ import (
 )
 
 func TestE2E(t *testing.T) {
+	const username = "erik"
 	c := chesscompubapi.NewClient()
 
-	archives, err := c.ListArchives("erik")
+	archives, err := c.ListArchives(username)
 	if err != nil {
 		t.Errorf("ListArchives err: %v", err)
 		return
@@ -24,7 +25,7 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	playerProfile, err := c.GetPlayerProfile("erik")
+	playerProfile, err := c.GetPlayerProfile(username)
 	if err != nil {
 		t.Errorf("GetPlayerProfile err: %v", err)
 		return
@@ -33,6 +34,12 @@ func TestE2E(t *testing.T) {
 	_, err = c.GetCountryProfile(playerProfile.CountryCode)
 	if err != nil {
 		t.Errorf("GetCountryProfile err: %v", err)
+		return
+	}
+
+	_, err = c.ListPlayerClubs(username)
+	if err != nil {
+		t.Errorf("ListPlayerClubs err: %v", err)
 		return
 	}
 }

@@ -1,4 +1,4 @@
-# ♟️ chesscompubapi [![GoDoc][doc-img]][doc]
+# ♟️ chesscompubapi [![Go Reference](https://pkg.go.dev/badge/github.com/agoblet/chesscompubapi.svg)](https://pkg.go.dev/github.com/agoblet/chesscompubapi)
 
 Go client for the [chess.com PubAPI](https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-archive).
 
