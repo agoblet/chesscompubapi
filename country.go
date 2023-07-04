@@ -10,7 +10,7 @@ type CountryProfile struct {
 	Name string `json:"name"`
 }
 
-// GetCountryProfile gets the profile of the country
+// GetCountryProfile gets the profile of the country.
 func (c *Client) GetCountryProfile(code string) (CountryProfile, error) {
 	profile := &CountryProfile{}
 

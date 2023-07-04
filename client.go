@@ -1,6 +1,7 @@
 package chesscompubapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,14 +12,14 @@ const (
 )
 
 /*
-Client is the struct that handles requests to the chess.com PubAPI.
+Client handles requests to the chess.com PubAPI.
 The Client should always be created via the NewClient function.
 The zero-value of Client is invalid.
 
 The Get* and List* functions of the Client, e.g. GetPlayerProfile, all behave in the same way.
 They return an *HTTPError if the API returns a status code other than 200.
 They an *url.Error if the API call failed for other reasons.
-Returns an error if the response cannot be decoded into the return type, e.g. PlayerProfile for function GetPlayerProfile.
+They return an error if the response cannot be decoded into the return type, e.g. PlayerProfile for function GetPlayerProfile.
 */
 type Client struct {
 	baseURL    string
@@ -83,6 +84,15 @@ func (c *Client) get(path string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func (c *Client) getInto(path string, v any) error {
+	body, err := c.get(path)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(body, v)
 }
 
 // Error returns a formatted string representing the HTTPError.

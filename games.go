@@ -17,24 +17,24 @@ type Archive struct {
 
 // Represents a finished game played by 2 players.
 type Game struct {
-	Black        GamePlayer  `json:"black"`
-	FEN          string      `json:"fen"`
-	Accuracies   *Accuracies `json:"accuracies"`
-	White        GamePlayer  `json:"white"`
-	UUID         string      `json:"uuid"`
-	PGN          string      `json:"pgn"`
-	TCN          string      `json:"tcn"`
-	URL          string      `json:"url"`
-	TimeControl  string      `json:"time_control"`
-	Rules        string      `json:"rules"`
-	InitialSetup string      `json:"initial_setup"`
-	TimeClass    string      `json:"time_class"`
-	ECO          *string     `json:"eco"`
-	Match        *string     `json:"match"`
-	Tournament   *string     `json:"tournament"`
-	Rated        bool        `json:"rated"`
-	StartTime    time.Time   `json:"-"`
-	EndTime      time.Time   `json:"-"`
+	Black        GamePlayer           `json:"black"`
+	FEN          string               `json:"fen"`
+	Accuracies   *Accuracies          `json:"accuracies"`
+	White        GamePlayer           `json:"white"`
+	UUID         string               `json:"uuid"`
+	PGN          string               `json:"pgn"`
+	TCN          string               `json:"tcn"`
+	URL          string               `json:"url"`
+	TimeControl  string               `json:"time_control"`
+	Rules        string               `json:"rules"`
+	InitialSetup string               `json:"initial_setup"`
+	TimeClass    string               `json:"time_class"`
+	ECO          *string              `json:"eco"`
+	Match        *string              `json:"match"`
+	Tournament   *string              `json:"tournament"`
+	Rated        bool                 `json:"rated"`
+	StartTime    UnixSecondsTimestamp `json:"start_time"`
+	EndTime      UnixSecondsTimestamp `json:"end_time"`
 }
 
 // GamePlayer represents one of the 2 players of a chess game.
@@ -54,75 +54,51 @@ type Accuracies struct {
 // ListArchives lists all Archives available for a player.
 func (c *Client) ListArchives(username string) ([]Archive, error) {
 	const urlTemplate = "player/%s/games/archives"
-	body, err := c.get(fmt.Sprintf(urlTemplate, username))
+	archives := &struct {
+		Archives []Archive `json:"archives"`
+	}{}
+	err := c.getInto(fmt.Sprintf(urlTemplate, username), archives)
 	if err != nil {
 		return nil, err
 	}
 
-	archiveURLs := &struct {
-		URLs []string `json:"archives"`
-	}{}
-	if err := json.Unmarshal(body, archiveURLs); err != nil {
-		return nil, err
-	}
-
-	archives := make([]Archive, len(archiveURLs.URLs))
-	for i, url := range archiveURLs.URLs {
-		archives[i], err = url2Archive(url, username)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return archives, nil
+	return archives.Archives, nil
 }
 
 // ListGames lists all Games available in an archive.
 func (c *Client) ListGames(archive Archive) ([]Game, error) {
 	const urlTemplate = "player/%s/games/%d/%02d"
-	body, err := c.get(fmt.Sprintf(urlTemplate, archive.Username, archive.Year, archive.Month))
-	if err != nil {
-		return nil, err
-	}
-
-	timestamps := &struct {
-		Games []struct {
-			StartTime int64 `json:"start_time"`
-			EndTime   int64 `json:"end_time"`
-		} `json:"games"`
-	}{}
-	if err := json.Unmarshal(body, timestamps); err != nil {
-		return nil, err
-	}
-
 	games := &struct {
 		Games []Game `json:"games"`
 	}{}
-	if err := json.Unmarshal(body, games); err != nil {
+	err := c.getInto(fmt.Sprintf(urlTemplate, archive.Username, archive.Year, archive.Month), games)
+	if err != nil {
 		return nil, err
-	}
-	for i, g := range timestamps.Games {
-		games.Games[i].StartTime = time.Unix(g.StartTime, 0)
-		games.Games[i].EndTime = time.Unix(g.EndTime, 0)
 	}
 
 	return games.Games, nil
 }
 
-func url2Archive(url, username string) (Archive, error) {
+// UnmarshalJSON unmarshals an archive URL from a JSON document into an Archive.
+func (a *Archive) UnmarshalJSON(data []byte) error {
+	var url string
+	if err := json.Unmarshal(data, &url); err != nil {
+		return err
+	}
+
 	parts := strings.Split(url, "/")
 	year, err := strconv.Atoi(parts[len(parts)-2])
 	if err != nil {
-		return Archive{}, err
+		return err
 	}
 	month, err := strconv.Atoi(parts[len(parts)-1])
 	if err != nil {
-		return Archive{}, err
+		return err
 	}
 
-	return Archive{
-		Username: username,
-		Year:     year,
-		Month:    time.Month(month),
-	}, nil
+	a.Username = parts[len(parts)-4]
+	a.Year = year
+	a.Month = time.Month(month)
+
+	return nil
 }

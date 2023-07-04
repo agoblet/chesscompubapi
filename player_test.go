@@ -45,8 +45,8 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 				Followers:   1161658,
 				CountryCode: "US",
 				Location:    "Sunrise, Florida",
-				LastOnline:  time.Unix(1687899135, 0),
-				Joined:      time.Unix(1389043258, 0),
+				LastOnline:  chesscompubapi.UnixSecondsTimestamp{time.Unix(1687899135, 0)},
+				Joined:      chesscompubapi.UnixSecondsTimestamp{time.Unix(1389043258, 0)},
 				Status:      "premium",
 				IsStreamer:  true,
 				TwitchURL:   "https://twitch.tv/gmhikaru",
@@ -58,11 +58,13 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 			giveUsername: "emptycountry",
 			givePattern:  "/pub/player/emptycountry",
 			giveResponseBody: `{
-				"country":""
+				"country":"",
+				"last_online":1687899135,
+				"joined":1389043258
 			}`,
 			want: chesscompubapi.PlayerProfile{
-				Joined:     time.Unix(0, 0),
-				LastOnline: time.Unix(0, 0),
+				LastOnline: chesscompubapi.UnixSecondsTimestamp{time.Unix(1687899135, 0)},
+				Joined:     chesscompubapi.UnixSecondsTimestamp{time.Unix(1389043258, 0)},
 			},
 		},
 	}
@@ -134,6 +136,191 @@ func TestGetPlayerProfile_ShouldErr(t *testing.T) {
 	}
 }
 
+func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
+	tests := []struct {
+		giveUsername, givePattern, giveResponseBody string
+		want                                        chesscompubapi.PlayerStats
+	}{
+		{
+			giveUsername: "axelgoblet",
+			givePattern:  "/pub/player/axelgoblet/stats",
+			giveResponseBody: `{
+				"chess_daily":{
+					"last":{
+						"rating":1016,
+						"date":1636636502,
+						"rd":129
+					},
+					"best":{
+						"rating":1190,
+						"date":1612811146,
+						"game":"https://www.chess.com/game/daily/360173289"
+					},
+					"record":{
+						"win":4,
+						"loss":8,
+						"draw":0,
+						"time_per_move":10644,
+						"timeout_percent":0
+					}
+				},
+				"chess_rapid":{
+					"last":{
+						"rating":1302,
+						"date":1688405035,
+						"rd":46
+					},
+					"best":{
+						"rating":1456,
+						"date":1633173887,
+						"game":"https://www.chess.com/game/live/27718858417"
+					},
+					"record":{
+						"win":885,
+						"loss":783,
+						"draw":49
+					}
+				},
+				"fide":0,
+				"tactics":{
+					"highest":{
+						"rating":2225,
+						"date":1688441463
+					},
+					"lowest":{
+						"rating":398,
+						"date":1609315550
+					}
+				},
+				"puzzle_rush":{
+					"best":{
+						"total_attempts":30,
+						"score":27
+					},
+					"daily":{
+						"total_attempts":30,
+						"score":27
+					}
+				}
+			}`,
+			want: chesscompubapi.PlayerStats{
+				ChessDaily: &chesscompubapi.PlayerGameTypeStats{
+					Last: chesscompubapi.LastPlayerGameTypeStats{
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1636636502, 0)},
+						Rating: 1016,
+						RD:     129,
+					},
+					Best: &chesscompubapi.BestPlayerGameTypeStats{
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1612811146, 0)},
+						Rating: 1190,
+						Game:   "https://www.chess.com/game/daily/360173289",
+					},
+					Record: chesscompubapi.RecordPlayerGameTypeStats{
+						Win:            4,
+						Loss:           8,
+						Draw:           0,
+						TimePerMove:    &chesscompubapi.DurationInSeconds{time.Second * 10644},
+						TimeoutPercent: floatpointer(0),
+					},
+				},
+				ChessRapid: &chesscompubapi.PlayerGameTypeStats{
+					Last: chesscompubapi.LastPlayerGameTypeStats{
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1688405035, 0)},
+						Rating: 1302,
+						RD:     46,
+					},
+					Best: &chesscompubapi.BestPlayerGameTypeStats{
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1633173887, 0)},
+						Rating: 1456,
+						Game:   "https://www.chess.com/game/live/27718858417",
+					},
+					Record: chesscompubapi.RecordPlayerGameTypeStats{
+						Win:  885,
+						Loss: 783,
+						Draw: 49,
+					},
+				},
+				Tactics: &chesscompubapi.PlayerHighestLowestStats{
+					Highest: chesscompubapi.DateRating{
+						Rating: 2225,
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1688441463, 0)},
+					},
+					Lowest: chesscompubapi.DateRating{
+						Rating: 398,
+						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1609315550, 0)},
+					},
+				},
+				PuzzleRush: &chesscompubapi.PlayerPuzzleRushStats{
+					Best: chesscompubapi.TotalAttemptsScore{
+						TotalAttempts: 30,
+						Score:         27,
+					},
+					Daily: &chesscompubapi.TotalAttemptsScore{
+						TotalAttempts: 30,
+						Score:         27,
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.giveUsername, func(t *testing.T) {
+			server := newTestServer([]testServerRoute{
+				{
+					pattern:      tt.givePattern,
+					responseBody: tt.giveResponseBody,
+					statusCode:   200,
+				},
+			})
+			defer server.Close()
+			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
+
+			got, err := c.GetPlayerStats(tt.giveUsername)
+
+			if err != nil {
+				t.Errorf("expected err to be nil got %v", err)
+				return
+			}
+			if !reflect.DeepEqual(tt.want, got) {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetPlayerStats_ShouldErr(t *testing.T) {
+	tests := []struct {
+		name, giveResponseBody string
+		giveStatusCode         int
+	}{
+		{
+			name:             "corruptBody",
+			giveResponseBody: `{"chess_daily": "a string instead of an object"}`,
+			giveStatusCode:   200,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := newTestServer([]testServerRoute{
+				{
+					pattern:      "/pub/player/johndoe",
+					responseBody: tt.giveResponseBody,
+					statusCode:   tt.giveStatusCode,
+				},
+			})
+			defer server.Close()
+			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
+
+			_, err := c.GetPlayerStats("johndoe")
+			if err == nil {
+				t.Error("expected err")
+			}
+		})
+	}
+}
+
 func TestListPlayerClubs_ShouldListClubs(t *testing.T) {
 	tests := []struct {
 		giveUsername, givePattern, giveResponseBody string
@@ -166,16 +353,16 @@ func TestListPlayerClubs_ShouldListClubs(t *testing.T) {
 				{
 					ID:           "open-discussion",
 					Name:         "Open Discussion",
-					LastActivity: time.Unix(1626902692, 0),
-					Joined:       time.Unix(1468775412, 0),
+					LastActivity: chesscompubapi.UnixSecondsTimestamp{time.Unix(1626902692, 0)},
+					Joined:       chesscompubapi.UnixSecondsTimestamp{time.Unix(1468775412, 0)},
 					Icon:         "https://images.chesscomfiles.com/uploads/v1/group/3541.45d6eb2c.50x50o.af307b09ebe7.png",
 					URL:          "https://www.chess.com/club/open-discussion",
 				},
 				{
 					ID:           "chesscom---tactics-trainer-approvers",
 					Name:         "Chess.com - Tactics Trainer Approvers",
-					LastActivity: time.Unix(1626902680, 0),
-					Joined:       time.Unix(1210299490, 0),
+					LastActivity: chesscompubapi.UnixSecondsTimestamp{time.Unix(1626902680, 0)},
+					Joined:       chesscompubapi.UnixSecondsTimestamp{time.Unix(1210299490, 0)},
 					Icon:         "https://images.chesscomfiles.com/uploads/v1/group/4146.cd1f3309.50x50o.2daf5479afb9.gif",
 					URL:          "https://www.chess.com/club/chesscom---tactics-trainer-approvers",
 				},
@@ -248,4 +435,8 @@ func TestListPlayerClubs_ShouldErr(t *testing.T) {
 			}
 		})
 	}
+}
+
+func floatpointer(float float64) *float64 {
+	return &float
 }
