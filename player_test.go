@@ -45,8 +45,8 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 				Followers:   1161658,
 				CountryCode: "US",
 				Location:    "Sunrise, Florida",
-				LastOnline:  chesscompubapi.UnixSecondsTimestamp{time.Unix(1687899135, 0)},
-				Joined:      chesscompubapi.UnixSecondsTimestamp{time.Unix(1389043258, 0)},
+				LastOnline:  chesscompubapi.UnixSecondsTimestamp(time.Unix(1687899135, 0)),
+				Joined:      chesscompubapi.UnixSecondsTimestamp(time.Unix(1389043258, 0)),
 				Status:      "premium",
 				IsStreamer:  true,
 				TwitchURL:   "https://twitch.tv/gmhikaru",
@@ -63,8 +63,8 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 				"joined":1389043258
 			}`,
 			want: chesscompubapi.PlayerProfile{
-				LastOnline: chesscompubapi.UnixSecondsTimestamp{time.Unix(1687899135, 0)},
-				Joined:     chesscompubapi.UnixSecondsTimestamp{time.Unix(1389043258, 0)},
+				LastOnline: chesscompubapi.UnixSecondsTimestamp(time.Unix(1687899135, 0)),
+				Joined:     chesscompubapi.UnixSecondsTimestamp(time.Unix(1389043258, 0)),
 			},
 		},
 	}
@@ -206,12 +206,12 @@ func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
 			want: chesscompubapi.PlayerStats{
 				ChessDaily: &chesscompubapi.PlayerGameTypeStats{
 					Last: chesscompubapi.LastPlayerGameTypeStats{
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1636636502, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1636636502, 0)),
 						Rating: 1016,
 						RD:     129,
 					},
 					Best: &chesscompubapi.BestPlayerGameTypeStats{
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1612811146, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1612811146, 0)),
 						Rating: 1190,
 						Game:   "https://www.chess.com/game/daily/360173289",
 					},
@@ -219,18 +219,18 @@ func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
 						Win:            4,
 						Loss:           8,
 						Draw:           0,
-						TimePerMove:    &chesscompubapi.DurationInSeconds{time.Second * 10644},
-						TimeoutPercent: floatpointer(0),
+						TimePerMove:    pointer(chesscompubapi.DurationInSeconds(time.Second * 10644)),
+						TimeoutPercent: pointer(0.),
 					},
 				},
 				ChessRapid: &chesscompubapi.PlayerGameTypeStats{
 					Last: chesscompubapi.LastPlayerGameTypeStats{
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1688405035, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1688405035, 0)),
 						Rating: 1302,
 						RD:     46,
 					},
 					Best: &chesscompubapi.BestPlayerGameTypeStats{
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1633173887, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1633173887, 0)),
 						Rating: 1456,
 						Game:   "https://www.chess.com/game/live/27718858417",
 					},
@@ -243,11 +243,11 @@ func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
 				Tactics: &chesscompubapi.PlayerHighestLowestStats{
 					Highest: chesscompubapi.DateRating{
 						Rating: 2225,
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1688441463, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1688441463, 0)),
 					},
 					Lowest: chesscompubapi.DateRating{
 						Rating: 398,
-						Date:   chesscompubapi.UnixSecondsTimestamp{time.Unix(1609315550, 0)},
+						Date:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1609315550, 0)),
 					},
 				},
 				PuzzleRush: &chesscompubapi.PlayerPuzzleRushStats{
@@ -353,16 +353,16 @@ func TestListPlayerClubs_ShouldListClubs(t *testing.T) {
 				{
 					ID:           "open-discussion",
 					Name:         "Open Discussion",
-					LastActivity: chesscompubapi.UnixSecondsTimestamp{time.Unix(1626902692, 0)},
-					Joined:       chesscompubapi.UnixSecondsTimestamp{time.Unix(1468775412, 0)},
+					LastActivity: chesscompubapi.UnixSecondsTimestamp(time.Unix(1626902692, 0)),
+					Joined:       chesscompubapi.UnixSecondsTimestamp(time.Unix(1468775412, 0)),
 					Icon:         "https://images.chesscomfiles.com/uploads/v1/group/3541.45d6eb2c.50x50o.af307b09ebe7.png",
 					URL:          "https://www.chess.com/club/open-discussion",
 				},
 				{
 					ID:           "chesscom---tactics-trainer-approvers",
 					Name:         "Chess.com - Tactics Trainer Approvers",
-					LastActivity: chesscompubapi.UnixSecondsTimestamp{time.Unix(1626902680, 0)},
-					Joined:       chesscompubapi.UnixSecondsTimestamp{time.Unix(1210299490, 0)},
+					LastActivity: chesscompubapi.UnixSecondsTimestamp(time.Unix(1626902680, 0)),
+					Joined:       chesscompubapi.UnixSecondsTimestamp(time.Unix(1210299490, 0)),
 					Icon:         "https://images.chesscomfiles.com/uploads/v1/group/4146.cd1f3309.50x50o.2daf5479afb9.gif",
 					URL:          "https://www.chess.com/club/chesscom---tactics-trainer-approvers",
 				},
@@ -437,6 +437,6 @@ func TestListPlayerClubs_ShouldErr(t *testing.T) {
 	}
 }
 
-func floatpointer(float float64) *float64 {
-	return &float
+func pointer[T any](v T) *T {
+	return &v
 }

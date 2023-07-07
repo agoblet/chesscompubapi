@@ -1,6 +1,6 @@
 # ♟️ chesscompubapi [![Go Reference](https://pkg.go.dev/badge/github.com/agoblet/chesscompubapi.svg)](https://pkg.go.dev/github.com/agoblet/chesscompubapi)
 
-Go client for the [chess.com PubAPI](https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-archive).
+Go client for the chess.com PubAPI.
 
 ## Installation
 
@@ -16,6 +16,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 ## Endpoint Implementation Status
 
 - ✅ /country/{iso}
+- ✅ /country/{iso}/players
 - ✅ /player/{username}
 - ✅ /player/{username}/clubs
 - ✅ /player/{username}/games/archives
@@ -24,7 +25,6 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /club/{url-ID}
 - ❌ /club/{url-ID}/members
 - ❌ /club/{url-ID}/matches
-- ❌ /country/{iso}/players
 - ❌ /country/{iso}/clubs
 - ❌ /leaderboards
 - ❌ /match/{ID}
@@ -44,3 +44,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /tournament/{url-ID}
 - ❌ /tournament/{url-ID}/{round}
 - ❌ /tournament/{url-ID}/{round}/{group}
+
+## Links 
+
+- [chess.com PubAPI Documentation](https://www.chess.com/news/view/published-data-api)

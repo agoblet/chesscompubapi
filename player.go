@@ -13,7 +13,7 @@ type PlayerProfile struct {
 	Name        string               `json:"name"`
 	Avatar      string               `json:"avatar"`
 	Location    string               `json:"location"`
-	CountryCode string               `json:"country"`
+	CountryCode StringFromPathSuffix `json:"country"`
 	Joined      UnixSecondsTimestamp `json:"joined"`
 	LastOnline  UnixSecondsTimestamp `json:"last_online"`
 	Followers   int                  `json:"followers"`
@@ -30,7 +30,7 @@ type PlayerClub struct {
 	Joined       UnixSecondsTimestamp `json:"joined"`
 	LastActivity UnixSecondsTimestamp `json:"last_activity"`
 	Icon         string               `json:"icon"`
-	ID           string               `json:"@id"`
+	ID           StringFromPathSuffix `json:"@id"`
 }
 
 type PlayerStats struct {
@@ -100,47 +100,30 @@ type TotalAttemptsScore struct {
 }
 
 // GetPlayerProfile gets the profile of a player.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-player.
 func (c *Client) GetPlayerProfile(username string) (PlayerProfile, error) {
-	profile := PlayerProfile{}
-
 	const urlTemplate = "player/%s"
+	profile := PlayerProfile{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, username), &profile)
-	if err != nil {
-		return profile, err
-	}
-
-	profile.CountryCode = partAfterLastSlash(profile.CountryCode)
-
-	return profile, nil
+	return profile, err
 }
 
 // ListPlayerClubs lists the clubs that a player is member of.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-player-clubs.
 func (c *Client) ListPlayerClubs(username string) ([]PlayerClub, error) {
 	const urlTemplate = "player/%s/clubs"
 	clubs := &struct {
 		Clubs []PlayerClub `json:"clubs"`
 	}{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, username), clubs)
-	if err != nil {
-		return nil, err
-	}
-
-	for i, c := range clubs.Clubs {
-		clubs.Clubs[i].ID = partAfterLastSlash(c.ID)
-	}
-
-	return clubs.Clubs, nil
+	return clubs.Clubs, err
 }
 
 // GetPlayerStats gets the profile of a player.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-player-stats.
 func (c *Client) GetPlayerStats(username string) (PlayerStats, error) {
-	stats := PlayerStats{}
-
 	const urlTemplate = "player/%s/stats"
+	stats := PlayerStats{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, username), &stats)
-	if err != nil {
-		return stats, err
-	}
-
-	return stats, nil
+	return stats, err
 }

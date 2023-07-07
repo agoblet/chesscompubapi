@@ -56,7 +56,7 @@ func WithBaseURL(url string) Option {
 }
 
 // WithHTTPClient configures a custom *http.Client to use for requests to the chess.com PubAPI.
-// It allows users to configure things such as timeouts and connection pooling.
+// It allows users to configure client properties such as timeouts and connection pooling.
 // If this option is omitted, http.DefaultClient will be used.
 func WithHTTPClient(httpClient *http.Client) Option {
 	return func(c *Client) {

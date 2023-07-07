@@ -7,36 +7,44 @@ import (
 )
 
 // UnixSecondsTimestamp decodes Unix seconds timestamps in JSON documents.
-type UnixSecondsTimestamp struct {
-	time.Time
-}
+type UnixSecondsTimestamp time.Time
 
 // DurationInSeconds decodes durations in seconds in JSON documents.
-type DurationInSeconds struct {
-	time.Duration
-}
+type DurationInSeconds time.Duration
 
+// DurationInSeconds decodes url paths in JSON documents where only the part after the last string is needed.
+type StringFromPathSuffix string
+
+// UnmarshalJSON unmarshals an integer representing Unix seconds into a time.Time.
 func (t *UnixSecondsTimestamp) UnmarshalJSON(data []byte) error {
 	var raw int64
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
-	t.Time = time.Unix(raw, 0)
+	*t = UnixSecondsTimestamp(time.Unix(raw, 0))
 	return nil
 }
 
+// UnmarshalJSON unmarshals an integer representing a duration in seconds into a time.Duration.
 func (d *DurationInSeconds) UnmarshalJSON(data []byte) error {
 	var raw int64
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
-	d.Duration = time.Second * time.Duration(raw)
+	*d = DurationInSeconds(time.Second * time.Duration(raw))
 	return nil
 }
 
-func partAfterLastSlash(url string) string {
-	parts := strings.Split(url, "/")
-	return parts[len(parts)-1]
+// UnmarshalJSON unmarshals an integer representing a duration in seconds into a time.Duration.
+func (d *StringFromPathSuffix) UnmarshalJSON(data []byte) error {
+	var raw string
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	parts := strings.Split(raw, "/")
+	*d = StringFromPathSuffix(parts[len(parts)-1])
+	return nil
 }

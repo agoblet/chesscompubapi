@@ -31,9 +31,15 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.GetCountryProfile(playerProfile.CountryCode)
+	_, err = c.GetCountryProfile(string(playerProfile.CountryCode))
 	if err != nil {
 		t.Errorf("GetCountryProfile err: %v", err)
+		return
+	}
+
+	_, err = c.ListCountryPlayers(string(playerProfile.CountryCode))
+	if err != nil {
+		t.Errorf("ListCountryPlayers err: %v", err)
 		return
 	}
 

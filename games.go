@@ -52,31 +52,25 @@ type Accuracies struct {
 }
 
 // ListArchives lists all Archives available for a player.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-archive-list.
 func (c *Client) ListArchives(username string) ([]Archive, error) {
 	const urlTemplate = "player/%s/games/archives"
 	archives := &struct {
 		Archives []Archive `json:"archives"`
 	}{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, username), archives)
-	if err != nil {
-		return nil, err
-	}
-
-	return archives.Archives, nil
+	return archives.Archives, err
 }
 
 // ListGames lists all Games available in an archive.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-archive.
 func (c *Client) ListGames(archive Archive) ([]Game, error) {
 	const urlTemplate = "player/%s/games/%d/%02d"
 	games := &struct {
 		Games []Game `json:"games"`
 	}{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, archive.Username, archive.Year, archive.Month), games)
-	if err != nil {
-		return nil, err
-	}
-
-	return games.Games, nil
+	return games.Games, err
 }
 
 // UnmarshalJSON unmarshals an archive URL from a JSON document into an Archive.
