@@ -12,7 +12,7 @@ type UnixSecondsTimestamp time.Time
 // DurationInSeconds decodes durations in seconds in JSON documents.
 type DurationInSeconds time.Duration
 
-// DurationInSeconds decodes url paths in JSON documents where only the part after the last string is needed.
+// StringFromPathSuffix decodes url paths in JSON documents where only the part after the last string is needed.
 type StringFromPathSuffix string
 
 // UnmarshalJSON unmarshals an integer representing Unix seconds into a time.Time.
@@ -37,7 +37,7 @@ func (d *DurationInSeconds) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// UnmarshalJSON unmarshals an integer representing a duration in seconds into a time.Duration.
+// UnmarshalJSON extracts the part after the last slash from a path.
 func (d *StringFromPathSuffix) UnmarshalJSON(data []byte) error {
 	var raw string
 	if err := json.Unmarshal(data, &raw); err != nil {

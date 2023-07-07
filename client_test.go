@@ -21,7 +21,10 @@ func newTestServer(routes []testServerRoute) *httptest.Server {
 	for _, route := range routes {
 		mux.HandleFunc(route.pattern, func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(route.statusCode)
-			w.Write([]byte(route.responseBody))
+			if _, err := w.Write([]byte(route.responseBody)); err != nil {
+				w.WriteHeader(500)
+				return
+			}
 			time.Sleep(route.requestDuration)
 		})
 	}

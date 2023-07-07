@@ -45,6 +45,21 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /tournament/{url-ID}/{round}
 - ❌ /tournament/{url-ID}/{round}/{group}
 
+## Contributing
+
+### Dev dependencies
+
+- make
+- [golangci-lint](https://golangci-lint.run/usage/install/#local-installation)
+
+### Testing your changes locally
+
+Run
+
+```
+make
+```
+
 ## Links 
 
 - [chess.com PubAPI Documentation](https://www.chess.com/news/view/published-data-api)
