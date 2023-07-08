@@ -73,6 +73,17 @@ func (c *Client) ListGames(archive Archive) ([]Game, error) {
 	return games.Games, err
 }
 
+// GetPGN lists all Games available in an archive.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-pgn.
+func (c *Client) GetPGN(archive Archive) (string, error) {
+	const urlTemplate = "player/%s/games/%d/%02d/pgn"
+	pgn, err := c.get(fmt.Sprintf(urlTemplate, archive.Username, archive.Year, archive.Month))
+	if err != nil {
+		return "", err
+	}
+	return string(pgn), nil
+}
+
 // UnmarshalJSON unmarshals an archive URL from a JSON document into an Archive.
 func (a *Archive) UnmarshalJSON(data []byte) error {
 	var url string

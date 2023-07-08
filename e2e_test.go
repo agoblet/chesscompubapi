@@ -25,6 +25,16 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
+	pgn, err := c.GetPGN(archives[0])
+	if err != nil {
+		t.Errorf("GetPGN err: %v", err)
+		return
+	}
+	if pgn[0] != '[' {
+		t.Errorf("expected PGN, got %s", pgn)
+		return
+	}
+
 	playerProfile, err := c.GetPlayerProfile(username)
 	if err != nil {
 		t.Errorf("GetPlayerProfile err: %v", err)
