@@ -1,4 +1,7 @@
-# ♟️ chesscompubapi [![Go Reference](https://pkg.go.dev/badge/github.com/agoblet/chesscompubapi.svg)](https://pkg.go.dev/github.com/agoblet/chesscompubapi)
+[![Go Reference](https://pkg.go.dev/badge/github.com/agoblet/chesscompubapi.svg)](https://pkg.go.dev/github.com/agoblet/chesscompubapi)
+[![codecov](https://codecov.io/gh/agoblet/chesscompubapi/branch/main/graph/badge.svg?token=U93I8XCM3X)](https://codecov.io/gh/agoblet/chesscompubapi)
+
+# ♟️ chesscompubapi 
 
 Go client for the chess.com PubAPI.
 
