@@ -1,7 +1,4 @@
-all: build test lint
-
-build:
-	go build -v
+all: test lint
 
 test:
 	go test -v

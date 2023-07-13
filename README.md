@@ -7,7 +7,9 @@ Go client for the chess.com PubAPI.
 
 ## Installation
 
-`go get -u github.com/agoblet/chesscompubapi`
+```
+$ go get -u github.com/agoblet/chesscompubapi
+```
 
 ## Quick Start
 
@@ -57,10 +59,8 @@ profile, err := c.GetPlayerProfile("hikaru")
 
 ### Testing your changes locally
 
-Run
-
 ```
-make
+$ make
 ```
 
 ## Links 
