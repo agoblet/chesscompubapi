@@ -58,4 +58,10 @@ func TestE2E(t *testing.T) {
 		t.Errorf("ListPlayerClubs err: %v", err)
 		return
 	}
+
+	_, err = c.ListStreamers()
+	if err != nil {
+		t.Errorf("ListStreamers err: %v", err)
+		return
+	}
 }
