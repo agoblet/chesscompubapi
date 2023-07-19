@@ -4,3 +4,10 @@ coverage:
       default:
         threshold: 1%
         target: auto
+        only_pulls: true
+        if_not_found: failure
+    patch:
+      default:
+        target: 80%
+        only_pulls: true
+        if_not_found: failure
