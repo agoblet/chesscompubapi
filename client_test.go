@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"testing"
 	"time"
 
@@ -31,6 +32,34 @@ func newTestServer(routes []testServerRoute) *httptest.Server {
 
 	server := httptest.NewServer(mux)
 	return server
+}
+
+func runErrorTestWithTestServer(routes []testServerRoute, f func(c *chesscompubapi.Client) error, t *testing.T) {
+	server := newTestServer(routes)
+	defer server.Close()
+	c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
+
+	err := f(c)
+
+	if err == nil {
+		t.Error("expected err")
+	}
+}
+
+func runOutputTestWithTestServer(routes []testServerRoute, f func(c *chesscompubapi.Client) (any, error), want any, t *testing.T) {
+	server := newTestServer(routes)
+	defer server.Close()
+	c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
+
+	got, err := f(c)
+
+	if err != nil {
+		t.Errorf("expected err to be nil got %v", err)
+		return
+	}
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("got %v, want %v", got, want)
+	}
 }
 
 func TestClient_ShouldTimeout(t *testing.T) {

@@ -1,7 +1,6 @@
 package chesscompubapi_test
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
@@ -71,25 +70,18 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.giveUsername, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      tt.givePattern,
-					responseBody: tt.giveResponseBody,
-					statusCode:   200,
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      tt.givePattern,
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
 				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			got, err := c.GetPlayerProfile(tt.giveUsername)
-
-			if err != nil {
-				t.Errorf("expected err to be nil got %v", err)
-				return
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+				func(c *chesscompubapi.Client) (any, error) { return c.GetPlayerProfile(tt.giveUsername) },
+				tt.want,
+				t,
+			)
 		})
 	}
 }
@@ -118,20 +110,14 @@ func TestGetPlayerProfile_ShouldErr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      "/pub/player/johndoe",
-					responseBody: tt.giveResponseBody,
-					statusCode:   tt.giveStatusCode,
-				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			_, err := c.GetPlayerProfile("johndoe")
-			if err == nil {
-				t.Error("expected err")
-			}
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/player/johndoe",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.GetPlayerProfile("johndoe")
+				return err
+			}, t)
 		})
 	}
 }
@@ -266,25 +252,18 @@ func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.giveUsername, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      tt.givePattern,
-					responseBody: tt.giveResponseBody,
-					statusCode:   200,
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      tt.givePattern,
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
 				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			got, err := c.GetPlayerStats(tt.giveUsername)
-
-			if err != nil {
-				t.Errorf("expected err to be nil got %v", err)
-				return
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+				func(c *chesscompubapi.Client) (any, error) { return c.GetPlayerStats(tt.giveUsername) },
+				tt.want,
+				t,
+			)
 		})
 	}
 }
@@ -303,20 +282,14 @@ func TestGetPlayerStats_ShouldErr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      "/pub/player/johndoe",
-					responseBody: tt.giveResponseBody,
-					statusCode:   tt.giveStatusCode,
-				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			_, err := c.GetPlayerStats("johndoe")
-			if err == nil {
-				t.Error("expected err")
-			}
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/player/johndoe",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.GetPlayerStats("johndoe")
+				return err
+			}, t)
 		})
 	}
 }
@@ -372,25 +345,18 @@ func TestListPlayerClubs_ShouldListClubs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.giveUsername, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      tt.givePattern,
-					responseBody: tt.giveResponseBody,
-					statusCode:   200,
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      tt.givePattern,
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
 				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			got, err := c.ListPlayerClubs(tt.giveUsername)
-
-			if err != nil {
-				t.Errorf("expected err to be nil got %v", err)
-				return
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+				func(c *chesscompubapi.Client) (any, error) { return c.ListPlayerClubs(tt.giveUsername) },
+				tt.want,
+				t,
+			)
 		})
 	}
 }
@@ -419,20 +385,14 @@ func TestListPlayerClubs_ShouldErr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      "/pub/player/johndoe/clubs",
-					responseBody: tt.giveResponseBody,
-					statusCode:   tt.giveStatusCode,
-				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			_, err := c.ListPlayerClubs("johndoe")
-			if err == nil {
-				t.Error("expected err")
-			}
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/player/johndoe/clubs",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.ListPlayerClubs("johndoe")
+				return err
+			}, t)
 		})
 	}
 }

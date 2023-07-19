@@ -1,7 +1,6 @@
 package chesscompubapi_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/agoblet/chesscompubapi"
@@ -28,25 +27,18 @@ func TestGetCountryProfile_ShouldGetProfile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.giveCountryCode, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      tt.givePattern,
-					responseBody: tt.giveResponseBody,
-					statusCode:   200,
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      tt.givePattern,
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
 				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			got, err := c.GetCountryProfile(tt.giveCountryCode)
-
-			if err != nil {
-				t.Errorf("expected err to be nil got %v", err)
-				return
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+				func(c *chesscompubapi.Client) (any, error) { return c.GetCountryProfile(tt.giveCountryCode) },
+				tt.want,
+				t,
+			)
 		})
 	}
 }
@@ -65,20 +57,14 @@ func TestGetCountryProfile_ShouldErr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      "/pub/country/MO",
-					responseBody: tt.giveResponseBody,
-					statusCode:   tt.giveStatusCode,
-				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			_, err := c.GetCountryProfile("MO")
-			if err == nil {
-				t.Error("expected err")
-			}
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/country/MO",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.GetCountryProfile("MO")
+				return err
+			}, t)
 		})
 	}
 }
@@ -100,25 +86,18 @@ func TestListCountryPlayers_ShouldListPlayers(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.giveCountryCode, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      tt.givePattern,
-					responseBody: tt.giveResponseBody,
-					statusCode:   200,
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      tt.givePattern,
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
 				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			got, err := c.ListCountryPlayers(tt.giveCountryCode)
-
-			if err != nil {
-				t.Errorf("expected err to be nil got %v", err)
-				return
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+				func(c *chesscompubapi.Client) (any, error) { return c.ListCountryPlayers(tt.giveCountryCode) },
+				tt.want,
+				t,
+			)
 		})
 	}
 }
@@ -137,20 +116,14 @@ func TestListCountryPlayers_ShouldErr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := newTestServer([]testServerRoute{
-				{
-					pattern:      "/pub/country/MO",
-					responseBody: tt.giveResponseBody,
-					statusCode:   tt.giveStatusCode,
-				},
-			})
-			defer server.Close()
-			c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))
-
-			_, err := c.GetCountryProfile("MO")
-			if err == nil {
-				t.Error("expected err")
-			}
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/country/MO",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.ListCountryPlayers("MO")
+				return err
+			}, t)
 		})
 	}
 }
