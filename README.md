@@ -28,6 +28,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ✅ /player/{username}/games/{YYYY}/{MM}
 - ✅ /player/{username}/games/{YYYY}/{MM}/pgn
 - ✅ /player/{username}/stats
+- ✅ /streamers
 - ❌ /club/{url-ID}
 - ❌ /club/{url-ID}/members
 - ❌ /club/{url-ID}/matches
@@ -44,7 +45,6 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /player/{username}/tournaments
 - ❌ /puzzle
 - ❌ /puzzle/random
-- ❌ /streamers
 - ❌ /titled/{title-abbrev}
 - ❌ /tournament/{url-ID}
 - ❌ /tournament/{url-ID}/{round}
