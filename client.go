@@ -7,23 +7,18 @@ import (
 	"net/http"
 )
 
-const (
-	defaultBaseURL = "https://api.chess.com"
-)
-
 /*
-Client handles requests to the chess.com PubAPI.
-The Client should always be created via the NewClient function.
-The zero-value of Client is invalid.
+Client handles HTTP requests to the chess.com PubAPI.
 
-The Get* and List* functions of the Client, e.g. GetPlayerProfile, all behave in the same way.
-They return an *HTTPError if the API returns a status code other than 200.
-They an *url.Error if the API call failed for other reasons.
-They return an error if the response cannot be decoded into the return type, e.g. PlayerProfile for function GetPlayerProfile.
+The Get* and List* functions of the Client, e.g. GetPlayerProfile, all behave in the same way:
+  - They return an *HTTPError if the API returns a status code other than 200.
+  - They an *url.Error if the API call failed for other reasons.
+  - They return an error if the response cannot be decoded into the return type, e.g. PlayerProfile for function GetPlayerProfile.
 */
 type Client struct {
-	baseURL    string
-	httpClient *http.Client
+	customBaseURL    string
+	hasCustomBaseURL bool
+	customHTTPClient *http.Client
 }
 
 // Option is the inferface used for functional options to configure the *Client.
@@ -37,9 +32,9 @@ type HTTPError struct {
 
 // NewClient creates a new *Client to send requests to the chess.com PubAPI.
 // Accepts any number of Options to customize the *Client.
+// If no options are passed, the function will return a pointer to the zero value of Client.
 func NewClient(options ...Option) *Client {
-	client := &Client{
-		baseURL: defaultBaseURL, httpClient: http.DefaultClient}
+	client := &Client{}
 	for _, option := range options {
 		option(client)
 	}
@@ -51,7 +46,8 @@ func NewClient(options ...Option) *Client {
 // If this option is omitted, the default URL https://api.chess.com will be used.
 func WithBaseURL(url string) Option {
 	return func(c *Client) {
-		c.baseURL = url
+		c.customBaseURL = url
+		c.hasCustomBaseURL = true
 	}
 }
 
@@ -60,12 +56,28 @@ func WithBaseURL(url string) Option {
 // If this option is omitted, http.DefaultClient will be used.
 func WithHTTPClient(httpClient *http.Client) Option {
 	return func(c *Client) {
-		c.httpClient = httpClient
+		c.customHTTPClient = httpClient
 	}
 }
 
+func (c *Client) getBaseURL() string {
+	baseURL := "https://api.chess.com"
+	if c.hasCustomBaseURL {
+		baseURL = c.customBaseURL
+	}
+	return baseURL
+}
+
+func (c *Client) getHTTPClient() *http.Client {
+	client := http.DefaultClient
+	if c.customHTTPClient != nil {
+		client = c.customHTTPClient
+	}
+	return client
+}
+
 func (c *Client) get(path string) ([]byte, error) {
-	response, err := c.httpClient.Get(fmt.Sprintf("%s/pub/%s", c.baseURL, path))
+	response, err := c.getHTTPClient().Get(fmt.Sprintf("%s/pub/%s", c.getBaseURL(), path))
 	if err != nil {
 		return nil, err
 	}

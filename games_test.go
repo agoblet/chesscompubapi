@@ -83,6 +83,11 @@ func TestListArchives_ShouldErr(t *testing.T) {
 			giveStatusCode:   200,
 		},
 		{
+			name:             "wrongArchiveType",
+			giveResponseBody: `{"archives":[{"foo":"bar"}]}`,
+			giveStatusCode:   200,
+		},
+		{
 			name:             "404",
 			giveResponseBody: "not found",
 			giveStatusCode:   404,
