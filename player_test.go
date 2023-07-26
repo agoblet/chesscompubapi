@@ -278,12 +278,23 @@ func TestGetPlayerStats_ShouldErr(t *testing.T) {
 			giveResponseBody: `{"chess_daily": "a string instead of an object"}`,
 			giveStatusCode:   200,
 		},
+		{
+			name: "corruptDuration",
+			giveResponseBody: `{
+				"chess_daily":{
+					"record":{
+						"time_per_move":[10644]
+					}
+				}
+			}`,
+			giveStatusCode: 200,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			runErrorTestWithTestServer([]testServerRoute{{
-				pattern:      "/pub/player/johndoe",
+				pattern:      "/pub/player/johndoe/stats",
 				responseBody: tt.giveResponseBody,
 				statusCode:   tt.giveStatusCode,
 			}}, func(c *chesscompubapi.Client) error {
@@ -379,6 +390,11 @@ func TestListPlayerClubs_ShouldErr(t *testing.T) {
 		{
 			name:             "corruptURL",
 			giveResponseBody: `{"clubs":[{"url": {"i": "am an object"}}]}`,
+			giveStatusCode:   200,
+		},
+		{
+			name:             "corruptID",
+			giveResponseBody: `{"clubs":[{"@id": {"i": "am an object"}}]}`,
 			giveStatusCode:   200,
 		},
 	}
