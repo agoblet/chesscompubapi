@@ -28,3 +28,14 @@ func (c *Client) ListCountryPlayers(code string) ([]string, error) {
 	err := c.getInto(fmt.Sprintf(urlTemplate, code), players)
 	return players.Players, err
 }
+
+// ListCountryClubs lists usernames for players who identify themselves as being in this country.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-country-clubs.
+func (c *Client) ListCountryClubs(code string) ([]StringFromPathSuffix, error) {
+	const urlTemplate = "country/%s/clubs"
+	clubs := &struct {
+		Clubs []StringFromPathSuffix `json:"clubs"`
+	}{}
+	err := c.getInto(fmt.Sprintf(urlTemplate, code), clubs)
+	return clubs.Clubs, err
+}

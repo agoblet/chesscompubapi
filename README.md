@@ -21,6 +21,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 ## Endpoint Implementation Status
 
 - ✅ /country/{iso}
+- ✅ /country/{iso}/clubs
 - ✅ /country/{iso}/players
 - ✅ /player/{username}
 - ✅ /player/{username}/clubs
@@ -32,7 +33,6 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /club/{url-ID}
 - ❌ /club/{url-ID}/members
 - ❌ /club/{url-ID}/matches
-- ❌ /country/{iso}/clubs
 - ❌ /leaderboards
 - ❌ /match/{ID}
 - ❌ /match/{ID}/{board}
