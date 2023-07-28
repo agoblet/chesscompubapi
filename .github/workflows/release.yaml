@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  docs:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Request docs update
+        run: curl https://proxy.golang.org/github.com/${GITHUB_REPOSITORY}/@v/${GITHUB_REF_NAME}.info

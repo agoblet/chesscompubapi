@@ -53,9 +53,15 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.ListPlayerClubs(username)
+	playerClubs, err := c.ListPlayerClubs(username)
 	if err != nil {
 		t.Errorf("ListPlayerClubs err: %v", err)
+		return
+	}
+
+	_, err = c.GetClub(string(playerClubs[0].ID))
+	if err != nil {
+		t.Errorf("GetClub err: %v", err)
 		return
 	}
 
