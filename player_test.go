@@ -40,7 +40,7 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 				URL:         "https://www.chess.com/member/Hikaru",
 				Name:        "Hikaru Nakamura",
 				Username:    "hikaru",
-				Title:       "GM",
+				Title:       pointer("GM"),
 				Followers:   1161658,
 				CountryCode: "US",
 				Location:    "Sunrise, Florida",

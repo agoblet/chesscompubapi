@@ -8,7 +8,7 @@ type PlayerProfile struct {
 	URL         string               `json:"url"`
 	Username    string               `json:"username"`
 	PlayerId    int                  `json:"player_id"`
-	Title       string               `json:"title"`
+	Title       *string              `json:"title"`
 	Status      string               `json:"status"`
 	Name        string               `json:"name"`
 	Avatar      string               `json:"avatar"`

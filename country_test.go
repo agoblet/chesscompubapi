@@ -128,7 +128,7 @@ func TestListCountryPlayers_ShouldErr(t *testing.T) {
 	}
 }
 
-func TestListCountryClubs_ShouldListPlayers(t *testing.T) {
+func TestListCountryClubs_ShouldListClubs(t *testing.T) {
 	tests := []struct {
 		giveCountryCode, givePattern, giveResponseBody string
 		want                                           []chesscompubapi.StringFromPathSuffix
