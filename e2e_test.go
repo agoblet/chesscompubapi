@@ -57,9 +57,13 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.ListCountryPlayers(string(playerProfile.CountryCode))
+	countryPlayers, err := c.ListCountryPlayers(string(playerProfile.CountryCode))
 	if err != nil {
 		t.Errorf("ListCountryPlayers err: %v", err)
+		return
+	}
+	if len(countryPlayers) == 0 {
+		t.Errorf("ListCountryPlayers expected output")
 		return
 	}
 
@@ -69,15 +73,29 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.GetClub(string(playerClubs[0].ID))
+	club, err := c.GetClub(string(playerClubs[0].ID))
 	if err != nil {
 		t.Errorf("GetClub err: %v", err)
 		return
 	}
 
-	_, err = c.ListStreamers()
+	activity, err := c.GetClubMemberActivity(string(club.ID))
+	if err != nil {
+		t.Errorf("GetClubMemberActivity err: %v", err)
+		return
+	}
+	if len(activity.AllTime) == 0 {
+		t.Errorf("GetClubMemberActivity expected output")
+		return
+	}
+
+	streamers, err := c.ListStreamers()
 	if err != nil {
 		t.Errorf("ListStreamers err: %v", err)
+		return
+	}
+	if len(streamers) == 0 {
+		t.Errorf("ListStreamers expected output")
 		return
 	}
 }

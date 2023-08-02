@@ -96,7 +96,112 @@ func TestGetClub_ShouldErr(t *testing.T) {
 				responseBody: tt.giveResponseBody,
 				statusCode:   tt.giveStatusCode,
 			}}, func(c *chesscompubapi.Client) error {
-				_, err := c.ListStreamers()
+				_, err := c.GetClub("chess-com-developer-community")
+				return err
+			}, t)
+		})
+	}
+}
+
+func TestGetClubMemberActivity_ShouldGetActivity(t *testing.T) {
+	tests := []struct {
+		giveResponseBody, name string
+		want                   chesscompubapi.ClubMemberActivity
+	}{
+		{
+			name: "basic",
+			giveResponseBody: `{
+				"weekly":[
+					{
+						"username":"0cean",
+						"joined":1675110044
+					}
+				],
+				"monthly":[
+					{
+						"username":"0nepunchpawn",
+						"joined":1626915696
+					},
+					{
+						"username":"101anj101",
+						"joined":1689197757
+					}
+				],
+				"all_time":[
+					{
+						"username":"000_elite_warrior_000",
+						"joined":1636391975
+					}
+				]
+			 }`,
+			want: chesscompubapi.ClubMemberActivity{
+				// Created:            chesscompubapi.UnixSecondsTimestamp(time.Unix(1500301978, 0)),
+				Weekly: []chesscompubapi.ClubMember{
+					{
+						Username: "0cean",
+						Joined:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1675110044, 0)),
+					},
+				},
+				Monthly: []chesscompubapi.ClubMember{
+					{
+						Username: "0nepunchpawn",
+						Joined:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1626915696, 0)),
+					},
+					{
+						Username: "101anj101",
+						Joined:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1689197757, 0)),
+					},
+				},
+				AllTime: []chesscompubapi.ClubMember{
+					{
+						Username: "000_elite_warrior_000",
+						Joined:   chesscompubapi.UnixSecondsTimestamp(time.Unix(1636391975, 0)),
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runOutputTestWithTestServer(
+				[]testServerRoute{
+					{
+						pattern:      "/pub/club/chess-com-developer-community/members",
+						responseBody: tt.giveResponseBody,
+						statusCode:   200,
+					},
+				},
+				func(c *chesscompubapi.Client) (any, error) {
+					return c.GetClubMemberActivity("chess-com-developer-community")
+				},
+				tt.want,
+				t,
+			)
+		})
+	}
+}
+
+func TestGetClubMemberActivity_ShouldErr(t *testing.T) {
+	tests := []struct {
+		name, giveResponseBody string
+		giveStatusCode         int
+	}{
+		{
+			name:             "corruptJSON",
+			giveResponseBody: `[]`,
+			giveStatusCode:   200,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runErrorTestWithTestServer([]testServerRoute{{
+				pattern:      "/pub/club/chess-com-developer-community/members",
+				responseBody: tt.giveResponseBody,
+				statusCode:   tt.giveStatusCode,
+			}}, func(c *chesscompubapi.Client) error {
+				_, err := c.GetClubMemberActivity("chess-com-developer-community")
 				return err
 			}, t)
 		})
