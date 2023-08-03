@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 /*
 Client handles HTTP requests to the chess.com PubAPI.
 
 The Get* and List* functions of the Client, e.g. GetPlayerProfile, all behave in the same way:
+  - Get* functions return a single item.
+  - List* functions return a slice of items.
   - They return an *HTTPError if the API returns a status code other than 200.
   - They an *url.Error if the API call failed for other reasons.
   - They return an error if the response cannot be decoded into the return type, e.g. PlayerProfile for function GetPlayerProfile.
@@ -18,11 +21,22 @@ The Get* and List* functions of the Client, e.g. GetPlayerProfile, all behave in
 type Client struct {
 	customBaseURL    string
 	hasCustomBaseURL bool
-	customHTTPClient *http.Client
+	httpClient       *http.Client
 }
 
 // Option is the inferface used for functional options to configure the *Client.
-type Option func(*Client)
+// To apply an Option, pass it to the NewClient function.
+type Option interface {
+	apply(*Client)
+}
+
+type option struct {
+	applyFn func(*Client)
+}
+
+func (o *option) apply(c *Client) {
+	o.applyFn(c)
+}
 
 // HTTPError is used when a status code other than 200 is returned by the chess.com PubAPI.
 type HTTPError struct {
@@ -32,11 +46,14 @@ type HTTPError struct {
 
 // NewClient creates a new *Client to send requests to the chess.com PubAPI.
 // Accepts any number of Options to customize the *Client.
-// If no options are passed, the function will return a pointer to the zero value of Client.
 func NewClient(options ...Option) *Client {
-	client := &Client{}
+	client := &Client{
+		httpClient: &http.Client{
+			Transport: http.DefaultTransport.(*http.Transport).Clone(),
+		},
+	}
 	for _, option := range options {
-		option(client)
+		option.apply(client)
 	}
 	return client
 }
@@ -44,20 +61,21 @@ func NewClient(options ...Option) *Client {
 // WithBaseURL configures a custom base URL to send requests to.
 // It must have the format protocol://host[:port].
 // If this option is omitted, the default URL https://api.chess.com will be used.
+// To apply this Option, pass it to the NewClient function.
 func WithBaseURL(url string) Option {
-	return func(c *Client) {
+	return &option{func(c *Client) {
 		c.customBaseURL = url
 		c.hasCustomBaseURL = true
-	}
+	}}
 }
 
-// WithHTTPClient configures a custom *http.Client to use for requests to the chess.com PubAPI.
-// It allows users to configure client properties such as timeouts and connection pooling.
-// If this option is omitted, http.DefaultClient will be used.
-func WithHTTPClient(httpClient *http.Client) Option {
-	return func(c *Client) {
-		c.customHTTPClient = httpClient
-	}
+// WithTimeout configures a timeout for requests to the chess.com PubAPI.
+// If this Option is omitted or a timeout of 0 is passed, there will be no timeout.
+// To apply this Option, pass it to the NewClient function.
+func WithTimeout(timeout time.Duration) Option {
+	return &option{func(c *Client) {
+		c.httpClient.Timeout = timeout
+	}}
 }
 
 func (c *Client) getBaseURL() string {
@@ -69,11 +87,10 @@ func (c *Client) getBaseURL() string {
 }
 
 func (c *Client) getHTTPClient() *http.Client {
-	client := http.DefaultClient
-	if c.customHTTPClient != nil {
-		client = c.customHTTPClient
+	if c.httpClient != nil {
+		return c.httpClient
 	}
-	return client
+	return http.DefaultClient
 }
 
 func (c *Client) get(path string) ([]byte, error) {

@@ -62,7 +62,7 @@ func runOutputTestWithTestServer(routes []testServerRoute, f func(c *chesscompub
 	}
 }
 
-func TestClient_ShouldTimeout(t *testing.T) {
+func TestWithTimeout_ShouldTimeout(t *testing.T) {
 	server := newTestServer([]testServerRoute{
 		{
 			pattern:         "/pub/player/henk/games/archives",
@@ -70,8 +70,7 @@ func TestClient_ShouldTimeout(t *testing.T) {
 		},
 	})
 	defer server.Close()
-	client := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL), chesscompubapi.WithHTTPClient(&http.Client{Timeout: time.Nanosecond}))
-
+	client := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL), chesscompubapi.WithTimeout(time.Nanosecond))
 	_, err := client.ListArchives("henk")
 
 	urlErr, ok := err.(*url.Error)

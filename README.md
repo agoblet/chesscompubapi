@@ -3,7 +3,11 @@
 
 # ♟️ chesscompubapi 
 
-Go client for the chess.com PubAPI.
+Go client for the chess.com Published-Data API (PubAPI).
+This package depends on the standard library only.
+It uses
+- [net/http.Client](https://pkg.go.dev/net/http#Client) to send HTTP requests to chess.com
+- [encoding/json.Unmarshal](https://pkg.go.dev/encoding/json#Unmarshal) to deserialize the response
 
 ## Installation
 
