@@ -78,7 +78,9 @@ func TestGetPlayerProfile_ShouldGetProfile(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.GetPlayerProfile(tt.giveUsername) },
+				func(c *chesscompubapi.Client) (chesscompubapi.PlayerProfile, error) {
+					return c.GetPlayerProfile(tt.giveUsername)
+				},
 				tt.want,
 				t,
 			)
@@ -260,7 +262,9 @@ func TestGetPlayerStats_ShouldGetStats(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.GetPlayerStats(tt.giveUsername) },
+				func(c *chesscompubapi.Client) (chesscompubapi.PlayerStats, error) {
+					return c.GetPlayerStats(tt.giveUsername)
+				},
 				tt.want,
 				t,
 			)
@@ -364,7 +368,9 @@ func TestListPlayerClubs_ShouldListClubs(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListPlayerClubs(tt.giveUsername) },
+				func(c *chesscompubapi.Client) ([]chesscompubapi.PlayerClub, error) {
+					return c.ListPlayerClubs(tt.giveUsername)
+				},
 				tt.want,
 				t,
 			)

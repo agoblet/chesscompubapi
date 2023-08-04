@@ -69,7 +69,9 @@ func TestGetClub_ShouldGetClub(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.GetClub("chess-com-developer-community") },
+				func(c *chesscompubapi.Client) (chesscompubapi.Club, error) {
+					return c.GetClub("chess-com-developer-community")
+				},
 				tt.want,
 				t,
 			)
@@ -172,7 +174,7 @@ func TestGetClubMemberActivity_ShouldGetActivity(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) {
+				func(c *chesscompubapi.Client) (chesscompubapi.ClubMemberActivity, error) {
 					return c.GetClubMemberActivity("chess-com-developer-community")
 				},
 				tt.want,

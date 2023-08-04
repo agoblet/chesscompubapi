@@ -35,7 +35,9 @@ func TestGetCountryProfile_ShouldGetProfile(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.GetCountryProfile(tt.giveCountryCode) },
+				func(c *chesscompubapi.Client) (chesscompubapi.CountryProfile, error) {
+					return c.GetCountryProfile(tt.giveCountryCode)
+				},
 				tt.want,
 				t,
 			)
@@ -94,7 +96,7 @@ func TestListCountryPlayers_ShouldListPlayers(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListCountryPlayers(tt.giveCountryCode) },
+				func(c *chesscompubapi.Client) ([]string, error) { return c.ListCountryPlayers(tt.giveCountryCode) },
 				tt.want,
 				t,
 			)
@@ -153,7 +155,9 @@ func TestListCountryClubs_ShouldListClubs(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListCountryClubs(tt.giveCountryCode) },
+				func(c *chesscompubapi.Client) ([]chesscompubapi.StringFromPathSuffix, error) {
+					return c.ListCountryClubs(tt.giveCountryCode)
+				},
 				tt.want,
 				t,
 			)

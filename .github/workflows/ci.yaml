@@ -27,7 +27,7 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
 
-  matrix_test:
+  test_older_go_versions:
 
     runs-on: ubuntu-latest
     strategy:

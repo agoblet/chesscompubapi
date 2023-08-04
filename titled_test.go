@@ -31,7 +31,7 @@ func TestListTitledPlayers_ShouldListPlayers(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListTitledPlayers(tt.giveTitle) },
+				func(c *chesscompubapi.Client) ([]string, error) { return c.ListTitledPlayers(tt.giveTitle) },
 				tt.want,
 				t,
 			)

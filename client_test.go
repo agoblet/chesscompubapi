@@ -46,7 +46,7 @@ func runErrorTestWithTestServer(routes []testServerRoute, f func(c *chesscompuba
 	}
 }
 
-func runOutputTestWithTestServer(routes []testServerRoute, f func(c *chesscompubapi.Client) (any, error), want any, t *testing.T) {
+func runOutputTestWithTestServer[T any](routes []testServerRoute, f func(c *chesscompubapi.Client) (T, error), want T, t *testing.T) {
 	server := newTestServer(routes)
 	defer server.Close()
 	c := chesscompubapi.NewClient(chesscompubapi.WithBaseURL(server.URL))

@@ -64,7 +64,7 @@ func TestListStreamers_ShouldListStreamers(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListStreamers() },
+				func(c *chesscompubapi.Client) ([]chesscompubapi.Streamer, error) { return c.ListStreamers() },
 				tt.want,
 				t,
 			)

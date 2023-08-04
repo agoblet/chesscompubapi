@@ -54,7 +54,9 @@ func TestListArchives_ShouldListArchives(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListArchives(tt.giveUsername) },
+				func(c *chesscompubapi.Client) ([]chesscompubapi.Archive, error) {
+					return c.ListArchives(tt.giveUsername)
+				},
 				tt.want,
 				t,
 			)
@@ -266,7 +268,7 @@ func TestListGames_ShouldListGames(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.ListGames(tt.giveArchive) },
+				func(c *chesscompubapi.Client) ([]chesscompubapi.Game, error) { return c.ListGames(tt.giveArchive) },
 				tt.want,
 				t,
 			)
@@ -388,7 +390,7 @@ func TestGetPGN_ShouldGetPGN(t *testing.T) {
 						statusCode:   200,
 					},
 				},
-				func(c *chesscompubapi.Client) (any, error) { return c.GetPGN(tt.giveArchive) },
+				func(c *chesscompubapi.Client) (string, error) { return c.GetPGN(tt.giveArchive) },
 				tt.giveResponseBody,
 				t,
 			)
