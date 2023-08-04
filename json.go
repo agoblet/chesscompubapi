@@ -38,6 +38,7 @@ func (d *DurationInSeconds) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalJSON extracts the part after the last slash from a path.
+// For example, "path/to/some/id" would be unmarshaled as "id".
 func (d *StringFromPathSuffix) UnmarshalJSON(data []byte) error {
 	var raw string
 	if err := json.Unmarshal(data, &raw); err != nil {
