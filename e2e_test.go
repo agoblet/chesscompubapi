@@ -35,6 +35,12 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
+	_, err = c.ListGamesToMove(username)
+	if err != nil {
+		t.Errorf("ListGamesToMove err: %v", err)
+		return
+	}
+
 	playerProfile, err := c.GetPlayerProfile(username)
 	if err != nil {
 		t.Errorf("GetPlayerProfile err: %v", err)

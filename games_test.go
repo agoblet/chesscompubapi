@@ -319,6 +319,60 @@ func TestListGames_ShouldErr(t *testing.T) {
 	}
 }
 
+func TestListGamesToMove_ShouldListGamesToMove(t *testing.T) {
+	runOutputTestWithTestServer(
+		[]testServerRoute{
+			{
+				pattern: "/pub/player/erika/games/to-move",
+				responseBody: `{
+					"games":[
+						{
+							"url":"https://www.chess.com/game/daily/549647145",
+							"move_by":1692852915,
+							"last_activity":1692766515,
+							"draw_offer":true
+						},
+						{
+							"url":"https://www.chess.com/game/daily/545881563",
+							"move_by":1693026654,
+							"last_activity":1692767455
+						}
+					]
+				}`,
+				statusCode: 200,
+			},
+		},
+		func(c *chesscompubapi.Client) ([]chesscompubapi.GameToMove, error) {
+			return c.ListGamesToMove("erika")
+		},
+		[]chesscompubapi.GameToMove{
+			{
+				URL:          "https://www.chess.com/game/daily/549647145",
+				MoveBy:       chesscompubapi.UnixSecondsTimestamp(time.Unix(1692852915, 0)),
+				LastActivity: chesscompubapi.UnixSecondsTimestamp(time.Unix(1692766515, 0)),
+				DrawOffer:    pointer(true),
+			},
+			{
+				URL:          "https://www.chess.com/game/daily/545881563",
+				MoveBy:       chesscompubapi.UnixSecondsTimestamp(time.Unix(1693026654, 0)),
+				LastActivity: chesscompubapi.UnixSecondsTimestamp(time.Unix(1692767455, 0)),
+			},
+		},
+		t,
+	)
+}
+
+func TestListGamesToMove_ShouldErr(t *testing.T) {
+	runErrorTestWithTestServer([]testServerRoute{{
+		pattern:      "/pub/player/johndoe/games/to-move",
+		responseBody: `{"games":[{"move_by":"not a number"}]}`,
+		statusCode:   200,
+	}}, func(c *chesscompubapi.Client) error {
+		_, err := c.ListGamesToMove("johndoe")
+		return err
+	}, t)
+}
+
 func TestGetPGN_ShouldGetPGN(t *testing.T) {
 	const pgn = `[Event "Hello!"]
 [Site "Chess.com"]

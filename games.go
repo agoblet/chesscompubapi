@@ -15,7 +15,7 @@ type Archive struct {
 	Month    time.Month
 }
 
-// Represents a finished game played by 2 players.
+// Game represents a finished game played by 2 players.
 type Game struct {
 	Black        GamePlayer           `json:"black"`
 	FEN          string               `json:"fen"`
@@ -35,6 +35,14 @@ type Game struct {
 	Rated        bool                 `json:"rated"`
 	StartTime    UnixSecondsTimestamp `json:"start_time"`
 	EndTime      UnixSecondsTimestamp `json:"end_time"`
+}
+
+// GameToMove represents a Daily Chess gameswhere it is the player's turn to act.
+type GameToMove struct {
+	URL          string               `json:"url"`
+	DrawOffer    *bool                `json:"draw_offer"`
+	LastActivity UnixSecondsTimestamp `json:"last_activity"`
+	MoveBy       UnixSecondsTimestamp `json:"move_by"`
 }
 
 // GamePlayer represents one of the 2 players of a chess game.
@@ -70,6 +78,17 @@ func (c *Client) ListGames(archive Archive) ([]Game, error) {
 		Games []Game `json:"games"`
 	}{}
 	err := c.getInto(fmt.Sprintf(urlTemplate, archive.Username, archive.Year, archive.Month), games)
+	return games.Games, err
+}
+
+// ListGamesToMove lists all Daily Chess games where it is the player's turn to act.
+// Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-endpoint-games-tomove.
+func (c *Client) ListGamesToMove(username string) ([]GameToMove, error) {
+	const urlTemplate = "player/%s/games/to-move"
+	games := &struct {
+		Games []GameToMove `json:"games"`
+	}{}
+	err := c.getInto(fmt.Sprintf(urlTemplate, username), games)
 	return games.Games, err
 }
 
