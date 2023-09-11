@@ -104,4 +104,16 @@ func TestE2E(t *testing.T) {
 		t.Errorf("ListStreamers expected output")
 		return
 	}
+
+	_, err = c.GetRandomPuzzle()
+	if err != nil {
+		t.Errorf("GetRandomPuzzle err: %v", err)
+		return
+	}
+
+	_, err = c.GetDailyPuzzle()
+	if err != nil {
+		t.Errorf("GetDailyPuzzle err: %v", err)
+		return
+	}
 }

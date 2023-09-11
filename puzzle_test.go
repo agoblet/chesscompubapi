@@ -7,7 +7,7 @@ import (
 	"github.com/agoblet/chesscompubapi"
 )
 
-func TestGetPuzzle_ShouldGetPuzzle(t *testing.T) {
+func TestGetDailyPuzzle_ShouldGetPuzzle(t *testing.T) {
 	runOutputTestWithTestServer(
 		[]testServerRoute{
 			{
@@ -23,7 +23,7 @@ func TestGetPuzzle_ShouldGetPuzzle(t *testing.T) {
 				statusCode: 200,
 			},
 		},
-		func(c *chesscompubapi.Client) (chesscompubapi.Puzzle, error) { return c.GetPuzzle() },
+		func(c *chesscompubapi.Client) (chesscompubapi.Puzzle, error) { return c.GetDailyPuzzle() },
 		chesscompubapi.Puzzle{
 			Title:       "Zwischenzug Zigzag",
 			URL:         "https://www.chess.com/forum/view/daily-puzzles/9-5-2023-zwischenzug-zigzag",
@@ -36,13 +36,13 @@ func TestGetPuzzle_ShouldGetPuzzle(t *testing.T) {
 	)
 }
 
-func TestGetPuzzle_ShouldErr(t *testing.T) {
+func TestGetDailyPuzzle_ShouldErr(t *testing.T) {
 	runErrorTestWithTestServer([]testServerRoute{{
 		pattern:      "/pub/puzzle",
 		responseBody: "[]",
 		statusCode:   200,
 	}}, func(c *chesscompubapi.Client) error {
-		_, err := c.GetPuzzle()
+		_, err := c.GetDailyPuzzle()
 		return err
 	}, t)
 }

@@ -10,9 +10,9 @@ type Puzzle struct {
 	PublishTime UnixSecondsTimestamp `json:"publish_time"`
 }
 
-// GetPuzzle gets information about the daily puzzle found in www.chess.com.
+// GetDailyPuzzle gets information about the daily puzzle found in www.chess.com.
 // Details about the endpoint can be found at https://www.chess.com/news/view/published-data-api#pubapi-daily-puzzle.
-func (c *Client) GetPuzzle() (Puzzle, error) {
+func (c *Client) GetDailyPuzzle() (Puzzle, error) {
 	const urlTemplate = "puzzle"
 	puzzle := Puzzle{}
 	err := c.getInto(urlTemplate, &puzzle)
