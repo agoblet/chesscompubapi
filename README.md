@@ -36,6 +36,8 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ✅ /player/{username}/games/{YYYY}/{MM}
 - ✅ /player/{username}/games/{YYYY}/{MM}/pgn
 - ✅ /player/{username}/stats
+- ✅ /puzzle
+- ✅ /puzzle/random
 - ✅ /streamers
 - ✅ /titled/{title-abbrev}
 - ❌ /club/{url-ID}/matches
@@ -47,8 +49,6 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ❌ /player/{username}/games
 - ❌ /player/{username}/matches
 - ❌ /player/{username}/tournaments
-- ❌ /puzzle
-- ❌ /puzzle/random
 - ❌ /tournament/{url-ID}
 - ❌ /tournament/{url-ID}/{round}
 - ❌ /tournament/{url-ID}/{round}/{group}
@@ -57,6 +57,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 
 ### Dev dependencies
 
+- Go
 - make
 - [golangci-lint](https://golangci-lint.run/usage/install/#local-installation)
 
