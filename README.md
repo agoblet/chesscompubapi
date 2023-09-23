@@ -1,5 +1,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/agoblet/chesscompubapi.svg)](https://pkg.go.dev/github.com/agoblet/chesscompubapi)
 [![codecov](https://codecov.io/gh/agoblet/chesscompubapi/branch/main/graph/badge.svg?token=U93I8XCM3X)](https://codecov.io/gh/agoblet/chesscompubapi)
+[![Go Report Card](https://goreportcard.com/badge/agoblet/chesscompubapi)](https://goreportcard.com/report/agoblet/chesscompubapi) 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 # ♟️ chesscompubapi 
 
