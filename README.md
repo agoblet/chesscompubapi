@@ -31,6 +31,7 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ✅ /country/{iso}
 - ✅ /country/{iso}/clubs
 - ✅ /country/{iso}/players
+- ✅ /leaderboards
 - ✅ /player/{username}
 - ✅ /player/{username}/clubs
 - ✅ /player/{username}/games/archives
@@ -43,7 +44,6 @@ profile, err := c.GetPlayerProfile("hikaru")
 - ✅ /streamers
 - ✅ /titled/{title-abbrev}
 - ❌ /club/{url-ID}/matches
-- ❌ /leaderboards
 - ❌ /match/{ID}
 - ❌ /match/{ID}/{board}
 - ❌ /match/live/{ID}
