@@ -10,18 +10,27 @@ import (
 )
 
 func TestE2E(t *testing.T) {
-	const username = "hikaru"
 	c := chesscompubapi.NewClient()
 
-	archives, err := c.ListArchives(username)
+	leaderboards, err := c.GetLeaderboards()
+	if err != nil {
+		t.Errorf("GetLeaderboards err: %v", err)
+		return
+	}
+
+	archives, err := c.ListArchives(leaderboards.LiveBlitz[0].Username)
 	if err != nil {
 		t.Errorf("ListArchives err: %v", err)
 		return
 	}
 
-	_, err = c.ListGames(archives[0])
+	games, err := c.ListGames(archives[0])
 	if err != nil {
 		t.Errorf("ListGames err: %v", err)
+		return
+	}
+	if len(games) == 0 {
+		t.Errorf("ListGames expected output")
 		return
 	}
 
@@ -35,13 +44,13 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.ListGamesToMove(username)
+	_, err = c.ListGamesToMove(archives[0].Username)
 	if err != nil {
 		t.Errorf("ListGamesToMove err: %v", err)
 		return
 	}
 
-	playerProfile, err := c.GetPlayerProfile(username)
+	playerProfile, err := c.GetPlayerProfile(leaderboards.LiveBullet[2].Username)
 	if err != nil {
 		t.Errorf("GetPlayerProfile err: %v", err)
 		return
@@ -57,13 +66,13 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	_, err = c.GetCountryProfile(string(playerProfile.CountryCode))
+	country, err := c.GetCountryProfile(string(playerProfile.CountryCode))
 	if err != nil {
 		t.Errorf("GetCountryProfile err: %v", err)
 		return
 	}
 
-	countryPlayers, err := c.ListCountryPlayers(string(playerProfile.CountryCode))
+	countryPlayers, err := c.ListCountryPlayers(country.Code)
 	if err != nil {
 		t.Errorf("ListCountryPlayers err: %v", err)
 		return
@@ -73,7 +82,7 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
-	playerClubs, err := c.ListPlayerClubs(username)
+	playerClubs, err := c.ListPlayerClubs(games[0].White.Username)
 	if err != nil {
 		t.Errorf("ListPlayerClubs err: %v", err)
 		return
