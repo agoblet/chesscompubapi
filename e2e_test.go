@@ -104,6 +104,16 @@ func TestE2E(t *testing.T) {
 		return
 	}
 
+	matches, err := c.GetClubMatches(string(club.ID))
+	if err != nil {
+		t.Errorf("GetClubMatches err: %v", err)
+		return
+	}
+	if len(matches.InProgress) == 0 {
+		t.Errorf("GetClubMatches expected output")
+		return
+	}
+
 	streamers, err := c.ListStreamers()
 	if err != nil {
 		t.Errorf("ListStreamers err: %v", err)
