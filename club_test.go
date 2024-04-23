@@ -148,3 +148,87 @@ func TestGetClubMemberActivity_ShouldErr(t *testing.T) {
 		return err
 	}, t)
 }
+
+func TestGetClubMatches_ShouldGetClubMatches(t *testing.T) {
+	runOutputTestWithTestServer(
+		[]testServerRoute{
+			{
+				pattern: "/pub/club/chess-com-developer-community/matches",
+				responseBody: `{
+					"finished":[
+						{
+							"name":"0cean",
+							"start_time":1675110044,
+							"opponent":"https://api.chess.com/pub/club/team-argentina-b",
+							"time_class":"daily",
+							"result":"win",
+							"@id":"https://api.chess.com/pub/match/796340"
+						}
+					],
+					"in_progress":[
+						{
+							"name":"0cean",
+							"start_time":1675110044,
+							"opponent":"https://api.chess.com/pub/club/team-argentina-b",
+							"time_class":"daily",
+							"@id":"https://api.chess.com/pub/match/796340"
+						}
+					],
+					"registered":[
+						{
+							"name":"0cean",
+							"opponent":"https://api.chess.com/pub/club/team-argentina-b",
+							"time_class":"daily",
+							"@id":"https://api.chess.com/pub/match/796340"
+						}
+					]
+				 }`,
+				statusCode: 200,
+			},
+		},
+		func(c *chesscompubapi.Client) (chesscompubapi.ClubMatches, error) {
+			return c.GetClubMatches("chess-com-developer-community")
+		},
+		chesscompubapi.ClubMatches{
+			Finished: []chesscompubapi.FinishedClubMatch{
+				{
+					Name:      "0cean",
+					ID:        "796340",
+					Opponent:  "team-argentina-b",
+					Result:    "win",
+					StartTime: chesscompubapi.UnixSecondsTimestamp(time.Unix(1675110044, 0)),
+					TimeClass: "daily",
+				},
+			},
+			Registered: []chesscompubapi.RegisteredClubMatch{
+				{
+					Name:      "0cean",
+					ID:        "796340",
+					Opponent:  "team-argentina-b",
+					TimeClass: "daily",
+				},
+			},
+			InProgress: []chesscompubapi.InProgressClubMatch{
+				{
+					Name:      "0cean",
+					ID:        "796340",
+					Opponent:  "team-argentina-b",
+					StartTime: chesscompubapi.UnixSecondsTimestamp(time.Unix(1675110044, 0)),
+					TimeClass: "daily",
+				},
+			},
+		},
+		t,
+	)
+}
+
+func TestGetClubMatches_ShouldErr(t *testing.T) {
+	runErrorTestWithTestServer([]testServerRoute{{
+		pattern:      "/pub/club/chess-com-developer-community/matches",
+		responseBody: "[]",
+		statusCode:   200,
+	}}, func(c *chesscompubapi.Client) error {
+		_, err := c.GetClubMatches("chess-com-developer-community")
+		return err
+	}, t)
+}
